@@ -1,0 +1,12 @@
+name:string, null: false
+type1:integer null: false
+tyep2:integer null: true
+total:integer null: false
+hp:integer null: flase
+attack:integer null: false
+defense:integer null: false
+special_atack:integer null: false
+specifal_defense:integer null: false
+speed:integer null: false
+generatation:integer null: false default: 1
+legendary:boolean null:false default:False
