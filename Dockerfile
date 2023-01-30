@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 FROM ruby:3.1.3
-RUN apt-get update -qq && apt-get install -y postgresql-client
+RUN apt-get update -qq && apt-get install -y postgresql-client telnet
 WORKDIR /pokemon
 COPY Gemfile /pokemon/Gemfile
 COPY Gemfile.lock /pokemon/Gemfile.lock
