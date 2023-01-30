@@ -105,3 +105,6 @@ yarn-debug.log*
 !/storage/.keep
 /public/uploads
 
+
+# Vim swap files
+*.sw?
