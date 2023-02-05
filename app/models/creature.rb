@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Creature < ApplicationRecord
   TYPES = {
     Normal: 1,
@@ -17,13 +19,9 @@ class Creature < ApplicationRecord
     Psychic: 15,
     Rock: 16,
     Steel: 17,
-    Water: 18,
-  }
+    Water: 18
+  }.freeze
 
   enum :type1, TYPES.clone
   enum :type2, TYPES.clone, prefix: true
-
-  def type1=(value)
-    super(value&.downcase)
-  end
 end

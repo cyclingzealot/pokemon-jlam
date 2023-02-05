@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddIndexesToCreatures < ActiveRecord::Migration[7.0]
   def change
     add_index :creatures, :name, unique: true

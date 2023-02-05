@@ -1,23 +1,25 @@
-require "test_helper"
+# frozen_string_literal: true
+
+require 'test_helper'
 
 class CreatureTest < ActiveSupport::TestCase
-  test "it will let me save one valid type 1" do
+  test 'it will let me save one valid type 1' do
     c = creatures(:one)
-    assert_nothing_raised {
-      c.type1 = "steel"
+    assert_nothing_raised do
+      c.type1 = 'steel'
       c.save!
-    }
+    end
   end
 
-  test "it will not let me save one of abnormal type 1" do
+  test 'it will not let me save one of abnormal type 1' do
     c = creatures(:two)
-    assert_raises {
-      c.type1 = "abnormal"
+    assert_raises do
+      c.type1 = 'abnormal'
       c.save!
-    }
+    end
   end
 
-  test "it defaults to generation one and false" do
+  test 'it defaults to generation one and false' do
     c = Creature.new
     refute c.legendary
     assert_equal 1, c.generation
