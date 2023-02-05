@@ -2,6 +2,7 @@
 
 one:
   name: MyString
+  'no': 1
   type1: 1
   type2: 1
   total: 1
@@ -11,11 +12,12 @@ one:
   special_attack: 1
   special_defense: 1
   speed: 1
-  genneration: 1
+  generation: 1
   legendary: false
 
 two:
   name: MyString
+  'no': 2
   type1: 1
   type2: 1
   total: 1
@@ -25,5 +27,5 @@ two:
   special_attack: 1
   special_defense: 1
   speed: 1
-  genneration: 1
+  generation: 1
   legendary: false
