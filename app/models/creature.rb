@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Creature < ApplicationRecord
+  extend Loadable
   TYPES = {
     Normal: 1,
     Bug: 2,
@@ -19,9 +20,25 @@ class Creature < ApplicationRecord
     Psychic: 15,
     Rock: 16,
     Steel: 17,
-    Water: 18
+    Water: 18,
   }.freeze
 
   enum :type1, TYPES.clone
   enum :type2, TYPES.clone, prefix: true
+
+  IMPORT_MAPPING = {
+    no: "#",
+    name: "Name",
+    type1: "Type 1",
+    type2: "Type 2",
+    total: "Total",
+    hp: "HP",
+    attack: "Attack",
+    defense: "Defense",
+    special_attack: "Sp. Atk",
+    special_defense: "Sp. Def",
+    speed: "Speed",
+    generation: "Generation",
+    legendary: "Legendary",
+  }
 end

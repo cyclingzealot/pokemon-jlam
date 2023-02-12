@@ -2,6 +2,9 @@ class CreatureController < ApplicationController
   before_action :set_creature
 
   def show
+    respond_to do |format|
+      format.json { redner json: @creature.attributes }
+    end
   end
 
   def update

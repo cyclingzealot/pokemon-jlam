@@ -24,4 +24,12 @@ class CreatureTest < ActiveSupport::TestCase
     refute c.legendary
     assert_equal 1, c.generation
   end
+
+  test "it can import a csv file" do
+    file_path = File.join(Rails.root, "test", "files", "pokemon.csv")
+    line_nums = File.open(file_path).readlines.size
+    assert_difference("Creature.count", line_nums - 1) {
+      Creature::update_from_csv(file_path, nil, "#", { noPrompt: true, dontUpdate: true })
+    }
+  end
 end

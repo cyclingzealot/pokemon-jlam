@@ -1,0 +1,21 @@
+#,Name,Type 1,Type 2,Total,HP,Attack,Defense,Sp. Atk,Sp. Def,Speed,Generation,Legendary
+5,Charmeleon,Fire,,405,58,64,58,80,65,80,1,False
+197,Umbreon,Dark,,525,95,65,110,60,130,65,2,False
+243,Raikou,Electric,,580,90,85,75,115,100,115,2,True
+294,Loudred,Normal,,360,84,71,43,71,43,48,3,False
+315,Roselia,Grass,Poison,400,50,60,45,100,80,65,3,False
+339,Barboach,Water,Ground,288,50,48,43,46,41,60,3,False
+350,Milotic,Water,,540,95,60,79,100,125,81,3,False
+352,Kecleon,Normal,,440,60,90,70,60,120,40,3,False
+479,Rotom,Electric,Ghost,440,50,50,77,95,77,91,4,False
+491,Darkrai,Dark,,600,70,90,90,135,90,125,4,True
+495,Snivy,Grass,,308,45,45,55,45,55,63,5,False
+552,Krokorok,Ground,Dark,351,60,82,45,45,45,74,5,False
+579,Reuniclus,Psychic,,490,110,65,75,125,85,30,5,False
+581,Swanna,Water,Flying,473,75,87,63,87,63,98,5,False
+594,Alomomola,Water,,470,165,75,80,40,45,65,5,False
+618,Stunfisk,Ground,Electric,471,109,66,84,81,99,32,5,False
+630,Mandibuzz,Dark,Flying,510,110,65,105,55,95,80,5,False
+640,Virizion,Grass,Fighting,580,91,90,72,90,129,108,5,True
+662,Fletchinder,Fire,Flying,382,62,73,55,56,52,84,6,False
+673,Gogoat,Grass,,531,123,100,62,97,81,68,6,False
