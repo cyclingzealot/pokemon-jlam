@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'csv'
 
 module Loadable
@@ -6,10 +8,10 @@ module Loadable
   # Returns false if the user does not enter Y or timeouts
   def get_prompt(question, timeoutSecs = 10)
     require 'timeout'
-    STDOUT.print "#{question} (Y/n) > "
+    $stdout.print "#{question} (Y/n) > "
 
     begin
-      prompt = Timeout.timeout(timeoutSecs) { STDIN.gets.chomp }
+      prompt = Timeout.timeout(timeoutSecs) { $stdin.gets.chomp }
       return true if prompt == 'Y'
 
       false
@@ -71,7 +73,7 @@ module Loadable
       methodToLookFor = attribute.to_s
       methodToLookFor += '=' if attribute != :id
 
-      if !columns_hash.keys.include?(attribute.to_s) and reflect_on_association(attribute).nil? and !instance_methods.include?(methodToLookFor.to_sym)
+      if !columns_hash.keys.include?(attribute.to_s) && reflect_on_association(attribute).nil? && !instance_methods.include?(methodToLookFor.to_sym)
         raise "#{self} does not respond to #{methodToLookFor}"
       end
     end
@@ -156,15 +158,15 @@ module Loadable
     raise 'No filePath specified (nil or blank)' if filePath.blank?
     raise "File #{File.expand_path(filePath)} does not exist" unless File.exist?(File.expand_path(filePath))
 
-    if mapping.nil? and self::IMPORT_MAPPING.nil?
+    if mapping.nil? && self::IMPORT_MAPPING.nil?
       raise "No mapping defined: both mapping and #{name}.IMPORT_MAPPING constant are nil"
     end
 
     knownOptions = %i[seperator skipCondition skipPostImport maxElapsedMinutes dontUpdate dontCreate
                       noPrompt notEmpty alreadyInDb]
     unknownOptions = (options.keys - knownOptions)
-    if unknownOptions.count > 0
-      msg = "WARNING: unkown option #{unknownOptions.map { |o| o.to_s }.join(', ')}"
+    if unknownOptions.count.positive?
+      msg = "WARNING: unkown option #{unknownOptions.map(&:to_s).join(', ')}"
       puts "\n#{msg}\n"
       Rails.env.development? ? byebug : (sleep 5)
       sleep 1
@@ -202,7 +204,7 @@ module Loadable
     rowsImported = 0
     CSV.open(filePath, 'r:bom|utf-8', headers: :first_row, col_sep: seperator) do |csv|
       totalLines = `wc -l "#{filePath}"`.strip.split(' ')[0].to_i - 1
-      if (options[:noPrompt].nil? or options[:noPrompt] == false) and (get_prompt("Load #{filePath} (#{totalLines} lines)?") == false)
+      if (options[:noPrompt].nil? || (options[:noPrompt] == false)) && (get_prompt("Load #{filePath} (#{totalLines} lines)?") == false)
         next
       end
 
@@ -221,7 +223,7 @@ module Loadable
         count += 1
         pctError = ((notLoaded.count * 100.to_f) / totalLines).round
 
-        if DateTime.now >= lastCheck + 1.seconds or totalLines < 50 or count == totalLines
+        if (DateTime.now >= lastCheck + 1.seconds) || (totalLines < 50) || (count == totalLines)
           printProgress("Reading #{filePath} (#{pctError}% errors)", count, totalLines)
           lastCheck = DateTime.now
         end
@@ -236,7 +238,7 @@ module Loadable
           end
 
           # All columns blank
-          if row.to_h.values.uniq.reject { |v| v.blank? }.count == 0
+          if row.to_h.values.uniq.reject(&:blank?).count.zero?
             stats['Rows skipped'] += 1
             next
           end
@@ -270,7 +272,7 @@ module Loadable
 
         pctError = ((notLoaded.count * 100.to_f) / totalLines).round
 
-        if DateTime.now >= lastCheck + 1.seconds or totalLines < 50 or count == totalHashes
+        if (DateTime.now >= lastCheck + 1.seconds) || (totalLines < 50) || (count == totalHashes)
           printProgress("Updating / creating data (#{notLoaded.count} (#{pctError}%) errors)", count,
                         dataInHashes.count)
           lastCheck = DateTime.now
@@ -278,7 +280,7 @@ module Loadable
 
         object = nil
 
-        if !options[:maxElapsedMinutes].nil? and options[:maxElapsedMinutes].to_i && ((DateTime.now - beginImportTS).to_f * 60 * 24 > options[:maxElapsedMinutes].to_i)
+        if !options[:maxElapsedMinutes].nil? && options[:maxElapsedMinutes].to_i && ((DateTime.now - beginImportTS).to_f * 60 * 24 > options[:maxElapsedMinutes].to_i)
           warn "#{options[:maxElapsedMinutes].to_i} max minutes elapsed"
           break
         end
@@ -295,15 +297,15 @@ module Loadable
           alreadyInDb ||= self::IMPORT_ALREADY_IN if defined?(self::IMPORT_ALREADY_IN)
 
           # dontUpdate is deprecated, we use alreadyInDb now
-          alreadyInDb = :alwaysCreate if alreadyInDb.nil? and dontUpdate.present? && (dontUpdate == true)
+          alreadyInDb = :alwaysCreate if alreadyInDb.nil? && dontUpdate.present? && (dontUpdate == true)
 
           # byebug if (Rails.env.development? and dataEntry[:name] == "PROGCLASSIC4B-MSTEAMS")
 
           # byebug if Rails.env.development? and (0..100).to_a.sample < 30
           # We enter this section if alreadyInDb == :skip, cause ...
           # we need to know if it's already in the database
-          if alreadyInDb.nil? or %i[skip update].include?(alreadyInDb)
-            primaryKeyColumn = self::IMPORT_PRIMARY_KEY if primaryKeyColumn.nil? and defined?(self::IMPORT_PRIMARY_KEY)
+          if alreadyInDb.nil? || %i[skip update].include?(alreadyInDb)
+            primaryKeyColumn = self::IMPORT_PRIMARY_KEY if primaryKeyColumn.nil? && defined?(self::IMPORT_PRIMARY_KEY)
 
             if primaryKeyColumn.blank?
               raise "Not sure I should have a nil or empty key.  Primary key column was #{primaryKeyColumn}"
@@ -314,7 +316,7 @@ module Loadable
 
           # byebug if (Rails.env.development? and object.present?)
 
-          if object.nil? or alreadyInDb == :alwaysCreate
+          if object.nil? || (alreadyInDb == :alwaysCreate)
             # Object not found lets create
             if options[:dontCreate] == true
               stats['Objects not created'] += 1
@@ -322,7 +324,7 @@ module Loadable
               create!(cloneWithoutCommentKeys(dataEntry))
               stats['Objects created'] += 1
             end
-          elsif alreadyInDb.nil? or alreadyInDb != :skip
+          elsif alreadyInDb.nil? || (alreadyInDb != :skip)
             # Object found, lets update
             object.update(cloneWithoutCommentKeys(dataEntry))
             object.save!
@@ -334,7 +336,7 @@ module Loadable
             byebug if Rails.env.development?
             raise msg
           else
-            msg = "Undefined behavior for alreadyInDb == #{alreadyInDb}, " + (object.nil? ? 'nil' : 'present') + ' object'
+            msg = "Undefined behavior for alreadyInDb == #{alreadyInDb}, #{object.nil? ? 'nil' : 'present'} object"
             byebug if Rails.env.development?
             raise msg
           end
@@ -352,7 +354,7 @@ module Loadable
 
       endImportTS = DateTime.now
 
-      if defined?(self::IMPORT_DELETE_NOT_UPDATED) and self::IMPORT_DELETE_NOT_UPDATED
+      if defined?(self::IMPORT_DELETE_NOT_UPDATED) && self::IMPORT_DELETE_NOT_UPDATED
         toDelete = where(imported_at: nil)
         stats["Rows 'deleted' or *deleted*"] = toDelete.count
         toDelete.delete_all
@@ -367,13 +369,13 @@ module Loadable
       stats['Rows not imported'] = notLoaded.count
       stats.each { |label, number| puts "#{label}: #{number} (#{((number * 100.to_f) / totalLines).round(2)} %)" }
 
-      if notLoaded.count > 0
+      if notLoaded.count.positive?
         logLocation = log_not_imported(notLoaded)
         warn "See #{Rails.root}/#{logLocation} for details on not loaded objects"
       end
     end
 
-    if rowsImported > 0 and respond_to?(:import_post_exec) and (options[:skipPostImport].nil? or options[:skipPostImport] == false)
+    if rowsImported.positive? && respond_to?(:import_post_exec) && (options[:skipPostImport].nil? || (options[:skipPostImport] == false))
       import_post_exec
     end
 
@@ -386,7 +388,7 @@ module Loadable
     copy = hash.clone
 
     copy.each do |key, _value|
-      copy.delete(key) if key.is_a?(String) and key.start_with?('#')
+      copy.delete(key) if key.is_a?(String) && key.start_with?('#')
     end
     copy
   end
@@ -420,7 +422,7 @@ module Loadable
 
   def checkRow(row, key)
     # If the column can't be found, raise an error after suggesting a hint what might be wrong
-    return if row.has_key?(key)
+    return if row.key?(key)
 
     msg = "Row does not have entry #{key}"
 
@@ -465,7 +467,7 @@ module Loadable
         # Detect if it's an assocation, and if it is, use
         # reflection to get the class
         # See https://stackoverflow.com/questions/3234991/what-is-the-class-of-an-association-based-on-the-foreign-key-attribute-only
-        if !reflect_on_association(classAttribute).nil? and !value.nil? and !value.empty?
+        if !reflect_on_association(classAttribute).nil? && !value.nil? && !value.empty?
           associationClassName = reflect_on_association(classAttribute).class_name
           assocClass = Object.const_get(associationClassName)
 
@@ -515,7 +517,7 @@ module Loadable
 
                 # Unambiguous french decimal use of comma, swap it with period
                 # Ie: it is not a comma, followed by 3 decimals
-                unless /,[0-9]{3}$/.match(value).to_a.count == 0
+                unless /,[0-9]{3}$/.match(value).to_a.count.zero?
                   raise 'Ambiguous usage of a comma for a decimal (comma followed by 3 decimals.  You will have to edit your data.'
                 end
 
@@ -551,7 +553,7 @@ module Loadable
           csvValue = row[csvHandler[:csvHeader]]
           value = csvHandler[:code].call(csvValue)
 
-          if value.nil? and csvValue.present?
+          if value.nil? && csvValue.present?
             raise "For string #{csvValue} under column #{csvHandler[:csvHeader]}, got nil object from Proc defined at #{csvHandler[:code]} ."
           end
         elsif csvHandler.keys.include?(:rowHandler)
@@ -571,7 +573,7 @@ module Loadable
 
       # Don't stop all the time
       # Maybe there's a way I can add a piece of data to the exception?
-      byebug if Rails.env.development? and DateTime.now.second % 4 == 0
+      byebug if Rails.env.development? && (DateTime.now.second % 4).zero?
 
       raise e
     end
@@ -584,7 +586,7 @@ module Loadable
     CSV.open(filePath, 'r:bom|utf-8', headers: :first_row, col_sep: seperator) do |csv|
       csv.first
       headers = csv.headers
-      if headers.first != 'id' and Rails.env.development?
+      if (headers.first != 'id') && Rails.env.development?
         puts "The first column header is not 'id', are you sure  the file is correct?"
         byebug
         nil
@@ -605,7 +607,7 @@ module Loadable
     count += 1 if zeroBased == true
     puts "Started #{DateTime.now.strftime('%H:%M:%S')}" if count == 1
     progressStr = "#{count} / #{total} #{(count.to_f * 100 / total).round} %"
-    print("\u001b[1000D" + progressStr + ' : ' + doingWhatStr)
+    print("\e[1000D#{progressStr} : #{doingWhatStr}")
     if count == total
       puts "\n"
       puts "Last one #{DateTime.now.strftime('%H:%M:%S')}"

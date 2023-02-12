@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreatureController < ApplicationController
   before_action :set_creature
 

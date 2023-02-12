@@ -40,5 +40,5 @@ class Creature < ApplicationRecord
     speed: 'Speed',
     generation: 'Generation',
     legendary: 'Legendary'
-  }
+  }.freeze
 end
