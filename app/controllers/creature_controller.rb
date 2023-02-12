@@ -7,14 +7,12 @@ class CreatureController < ApplicationController
     end
   end
 
-  def update
-  end
+  def update; end
 
   def create
-    if @create.save
-      status :no_content
-    else
-    end
+    return unless @create.save
+
+    status :no_content
   end
 
   def destroy

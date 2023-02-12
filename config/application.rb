@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require_relative "boot"
+require_relative 'boot'
 
-require "rails/all"
+require 'rails/all'
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -13,10 +13,10 @@ module Pokemon
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.0
 
-    initializer(:remove_action_mailbox_and_activestorage_routes, after: :add_routing_paths) { |app|
+    initializer(:remove_action_mailbox_and_activestorage_routes, after: :add_routing_paths) do |app|
       app.routes_reloader.paths.delete_if { |path| path =~ /activestorage/ }
       app.routes_reloader.paths.delete_if { |path| path =~ /actionmailbox/ }
-    }
+    end
     # Configuration for the application, engines, and railties goes here.
     #
     # These settings can be overridden in specific environments using the files
@@ -25,6 +25,6 @@ module Pokemon
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
 
-    config.eager_load_paths += %W(#{config.root}/lib)
+    config.eager_load_paths += %W[#{config.root}/lib]
   end
 end
