@@ -1,12 +1,17 @@
 # frozen_string_literal: true
 
 class CreatureController < ApplicationController
-  before_action :set_creature, except: :create
+  before_action :set_creature, except: %i[create index]
 
   def show
     respond_to do |format|
       format.json { render json: @creature.attributes, status: :ok }
     end
+  end
+
+  def index
+    @creatures = Creature.all.paginate(page: params[:page])
+    render json: @creatures, status: :ok
   end
 
   def update

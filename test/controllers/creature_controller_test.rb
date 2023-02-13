@@ -9,6 +9,11 @@ class CreatureControllerTest < ActionDispatch::IntegrationTest
     assert_response :ok
   end
 
+  test 'it can load index' do
+    get creature_index_path, as: :json
+    assert_response :ok
+  end
+
   test 'it can delete a creature' do
     c = creatures(:one)
     assert_difference('Creature.count', -1) do
@@ -70,11 +75,6 @@ class CreatureControllerTest < ActionDispatch::IntegrationTest
       assert_equal create_params, Creature.last.attributes.slice(*create_params.keys.map(&:to_s))
       assert_response :ok
     end
-  end
-
-  test 'it can list creatures' do
-    flunk('Test not done yet')
-    assert_response :ok
   end
 
   test 'it can update a creature' do
