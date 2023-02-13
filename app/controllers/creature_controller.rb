@@ -20,7 +20,7 @@ class CreatureController < ApplicationController
   end
 
   def create
-    status (@create.save ? :no_content : :unprocessable_entity)
+    status(@create.save ? :no_content : :unprocessable_entity)
   end
 
   def destroy
@@ -38,6 +38,7 @@ class CreatureController < ApplicationController
   end
 
   def creature_params
-    params.require(:creature).permit(:name, :type1, :type2, :total, :hp, :attack, :defense, :special_attack, :special_defense, :speed, :generation, :legendary)
+    params.require(:creature).permit(:name, :type1, :type2, :total, :hp, :attack, :defense, :special_attack,
+                                     :special_defense, :speed, :generation, :legendary)
   end
 end
