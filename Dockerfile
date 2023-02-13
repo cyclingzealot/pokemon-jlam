@@ -12,5 +12,9 @@ RUN chmod +x /usr/bin/entrypoint.sh
 ENTRYPOINT ["entrypoint.sh"]
 EXPOSE 3001
 
+# DB creation
+CMD ["bundle", "exec", "rake", "db:create"]
+RUN ["bundle", "exec", "rails", "db:seed"]
+
 # Configure the main process to run when running the image
 CMD ["rails", "server", "-b", "0.0.0.0"]
