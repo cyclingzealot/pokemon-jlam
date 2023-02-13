@@ -1,18 +1,18 @@
 # frozen_string_literal: true
 
 class CreatureController < ApplicationController
-  before_action :set_creature
+  before_action :set_creature, except: :create
 
   def show
     respond_to do |format|
-      format.json { render json: @creature.attributes }
+      format.json { render json: @creature.attributes, status: :ok }
     end
   end
 
   def update
     respond_to do |format|
       if @creature.update(creature_params)
-        format.json { render json: @creature.attributes, status: :ok }
+        format.json { render json: @creature.reload.attributes, status: :ok }
       else
         format.json { render json: @creature.errors, status: :unprocessable_entity }
       end
@@ -20,7 +20,25 @@ class CreatureController < ApplicationController
   end
 
   def create
-    status(@create.save ? :no_content : :unprocessable_entity)
+    generate_creature
+
+    respond_to do |format|
+      if @creature.present? && @creature.save
+        format.json { render json: @creature.reload.attributes, status: :ok }
+      else
+        format.json { render json: { errors: (@errors || @creature&.errors) }, status: :unprocessable_entity }
+      end
+    end
+  end
+
+  def generate_creature
+    parametres = creature_params
+    parametres[:no] = Creature.maximum(:no) + 1 if parametres[:no].nil?
+    begin
+      @creature = Creature.new(parametres)
+    rescue ArgumentError => e
+      @errors = e.message
+    end
   end
 
   def destroy
@@ -39,6 +57,6 @@ class CreatureController < ApplicationController
 
   def creature_params
     params.require(:creature).permit(:name, :type1, :type2, :total, :hp, :attack, :defense, :special_attack,
-                                     :special_defense, :speed, :generation, :legendary)
+                                     :special_defense, :speed, :generation, :legendary, :no)
   end
 end
