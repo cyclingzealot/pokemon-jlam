@@ -4,35 +4,48 @@ class CreatureController < ApplicationController
   before_action :set_creature, except: %i[create index]
 
   def show
-    respond_to do |format|
-      format.json { render json: @creature.attributes, status: :ok }
-    end
+    render json: @creature.attributes, status: :ok
   end
 
   def index
-    @creatures = Creature.all.paginate(page: params[:page])
-    render json: @creatures, status: :ok
+    page = params.fetch(:page, '1')
+    page = page.match(/\A[0-9]+\Z/) ? page.to_i : 1
+    @creatures = Creature.all.paginate(page:)
+    render json: generate_hash(page), status: :ok
+  end
+
+  def generate_hash(page)
+    {
+      links: {
+        self: request.url,
+        next: creature_index_url(page: page + 1),
+        last: creature_index_url(page: last_page)
+      },
+      data: @creatures.map do |c|
+        c.attributes.merge({ links: { self: creature_url(c) } })
+      end
+    }
+  end
+
+  def last_page
+    @last_page ||= (@creatures.size.to_f / 30).ceil
   end
 
   def update
-    respond_to do |format|
-      if @creature.update(creature_params)
-        format.json { render json: @creature.reload.attributes, status: :ok }
-      else
-        format.json { render json: @creature.errors, status: :unprocessable_entity }
-      end
+    if @creature.update(creature_params)
+      render json: @creature.reload.attributes, status: :ok
+    else
+      render json: @creature.errors, status: :unprocessable_entity
     end
   end
 
   def create
     generate_creature
 
-    respond_to do |format|
-      if @creature.present? && @creature.save
-        format.json { render json: @creature.reload.attributes, status: :ok }
-      else
-        format.json { render json: { errors: (@errors || @creature&.errors) }, status: :unprocessable_entity }
-      end
+    if @creature.present? && @creature.save
+      render json: @creature.reload.attributes, status: :ok
+    else
+      render json: { errors: (@errors || @creature&.errors) }, status: :unprocessable_entity
     end
   end
 
@@ -49,9 +62,7 @@ class CreatureController < ApplicationController
   def destroy
     @creature.destroy
 
-    respond_to do |format|
-      format.json { head :no_content }
-    end
+    head :no_content
   end
 
   private
