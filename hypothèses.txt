@@ -1,9 +1,5 @@
 * J'ai assumé que les tous les type 1 & 2 présent était l'enitièreté des types disponibles.  Donc j'en ai fais un enum avec les types présent
 * Il y avait des nom semblabbes, mais tous avaient des noms uniques, donc j'ai mis une clé unique sur le nom
 * Ces noms semblables avait un numéro (première colone) identique, donc je n'ai pas fait de cette colone la clé primaire.  Je l'ai nommé 'no'.  J'ai ajouté une clé primaire
-
 * Tel que dans le CSV, les type1 et type2 doivent commencer avec une majuscule
-
-* Nous avons implementés certains éléments de la norme https://jsonapi.org/ pour l'index, notament l'entrée links: et data: pour faciliter la navigation de la pagination. Ceci pourrait brisé vos tests
-
-*
+* J'ai implementé certains éléments de la norme https://jsonapi.org/ pour l'index, notament l'entrée links: et data: pour faciliter la navigation de la pagination. Ceci pourrait brisé vos tests
